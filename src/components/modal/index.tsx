@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import {
   Button,
   Dialog,
@@ -11,7 +10,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { toggleModal } from "../../store/modules/modal/modalSlices";
-import { addAssessment } from "../../store/modules/assessment/assessmentSlices";
+import { createAssessmentsThunk } from "../../store/modules/assessment/assessmentSlices";
 
 export function ModalCreateAssessment() {
   const dispatch = useAppDispatch();
@@ -27,11 +26,9 @@ export function ModalCreateAssessment() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     dispatch(
-      addAssessment({
-        id: uuidv4(),
+      createAssessmentsThunk({
         discipline,
         grade: parseFloat(grade),
-        idStudent: "123",
       })
     );
 

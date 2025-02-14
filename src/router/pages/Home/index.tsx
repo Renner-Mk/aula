@@ -1,28 +1,41 @@
 import { Button, Container, Grid2, TextField, Typography } from "@mui/material";
 import { useAppDispatch } from "../../../store/hooks";
-import { FormEvent } from "react";
-import { login } from "../../../store/modules/user/userSlice";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useNavigate } from "react-router";
-import { Header } from "../../../components/Header";
+import { ILogin } from "../../../types";
+import { loginRequest } from "../../../store/modules/user/userSlice";
 
 export function Home() {
   const dispath = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent) => {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const response = {
-      id: "1",
-      name: "Patrick",
-      token: "9a929533-abb7-4592-838e-849f10b68f59",
+
+    const data: ILogin = {
+      email: formData.email,
+      password: formData.password,
     };
 
-    dispath(login(response));
-    navigate("/assessment");
+    const user = await dispath(loginRequest(data)).unwrap();
+
+    if (user) {
+      navigate("/assessment");
+    }
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
   return (
     <>
-      <Header />
       <Container>
         <form onSubmit={handleSubmit}>
           <Typography variant="h6" gutterBottom>
@@ -36,6 +49,8 @@ export function Home() {
                 name="email"
                 variant="outlined"
                 label="E-mail"
+                value={formData.email}
+                onChange={handleInputChange}
               />
             </Grid2>
 
@@ -45,6 +60,8 @@ export function Home() {
                 name="password"
                 variant="outlined"
                 label="Senha"
+                value={formData.password}
+                onChange={handleInputChange}
               />
             </Grid2>
 
